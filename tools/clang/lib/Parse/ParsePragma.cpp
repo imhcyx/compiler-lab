@@ -63,7 +63,7 @@ void Parser::HandlePragmaPack() {
 }
 
 void Parser::HandlePragmaElementWise() {
-  assert(Tok.is(tok::annot_pragma_element_wise));
+  assert(Tok.is(tok::annot_pragma_elementwise));
   SourceLocation PragmaLoc = ConsumeToken();
   Actions.ActOnPragmaElementWise();
 }
@@ -365,9 +365,9 @@ void PragmaPackHandler::HandlePragma(Preprocessor &PP,
 }
 
 // #pragma elementWise
-void PragmaPackHandler::HandlePragma(Preprocessor &PP, 
-                                     PragmaIntroducerKind Introducer,
-                                     Token &PackTok) {
+void PragmaElementWiseHandler::HandlePragma(Preprocessor &PP, 
+                                            PragmaIntroducerKind Introducer,
+                                            Token &PackTok) {
   SourceLocation PackLoc = PackTok.getLocation();
   
   PP.CheckEndOfDirective("pragma elementWise");

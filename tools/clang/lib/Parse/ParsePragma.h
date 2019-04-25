@@ -54,7 +54,7 @@ public:
 
 class PragmaElementWiseHandler : public PragmaHandler {
 public:
-  explicit PragmaPackHandler() : PragmaHandler("elementWise") {}
+  explicit PragmaElementWiseHandler() : PragmaHandler("elementWise") {}
 
   virtual void HandlePragma(Preprocessor &PP, PragmaIntroducerKind Introducer,
                             Token &FirstToken);
