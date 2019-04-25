@@ -36,25 +36,25 @@ public:
         }
         if (const FunctionDecl *FD = dyn_cast<FunctionDecl>(DeclNode)) {
             std::string name = FD -> getNameAsString();
-            unsigned rule = FD -> getAsCheckRule();
+            unsigned rule = FD -> getElementWise();
             if(rule != 0) {
-                funcNamesToAsCheckRule[FD->getNameAsString()] = FD -> getAsCheckRule();
+                funcNamesToElementWise[FD->getNameAsString()] = FD -> getElementWise();
             } else {
-				std::map<std::string, unsigned>::iterator it = funcNamesToAsCheckRule.find(name);
-				if(it == funcNamesToAsCheckRule.end())
-					funcNamesToAsCheckRule[FD->getNameAsString()] = FD -> getAsCheckRule();
+				std::map<std::string, unsigned>::iterator it = funcNamesToElementWise.find(name);
+				if(it == funcNamesToElementWise.end())
+					funcNamesToElementWise[FD->getNameAsString()] = FD -> getElementWise();
             }
         }
         return RecursiveASTVisitor<TraverseFunctionDeclsVisitor>::TraverseDecl(DeclNode);
     }
     void OutputAsCheckRules() {
-        for(std::map<std::string, unsigned>::iterator it = funcNamesToAsCheckRule.begin(); it != funcNamesToAsCheckRule.end(); ++it) {
+        for(std::map<std::string, unsigned>::iterator it = funcNamesToElementWise.begin(); it != funcNamesToElementWise.end(); ++it) {
             llvm::outs() << it -> first << ": " << it -> second << "\n";
         }
     }
 private:
     ASTContext *Context;
-    std::map<std::string, unsigned> funcNamesToAsCheckRule;
+    std::map<std::string, unsigned> funcNamesToElementWise;
 };
 
 class TraverseFunctionDeclsConsumer : public ASTConsumer {
