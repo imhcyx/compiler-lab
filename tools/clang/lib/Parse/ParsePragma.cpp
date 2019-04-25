@@ -358,6 +358,25 @@ void PragmaPackHandler::HandlePragma(Preprocessor &PP,
                       /*OwnsTokens=*/false);
 }
 
+// #pragma elementWise
+void PragmaPackHandler::HandlePragma(Preprocessor &PP, 
+                                     PragmaIntroducerKind Introducer,
+                                     Token &PackTok) {
+  SourceLocation PackLoc = PackTok.getLocation();
+  
+  PP.CheckEndOfDirective("pragma elementWise");
+
+  Token *Toks = 
+    (Token*) PP.getPreprocessorAllocator().Allocate(
+      sizeof(Token) * 1, llvm::alignOf<Token>());
+  new (Toks) Token();
+  Toks[0].startToken();
+  Toks[0].setKind(tok::annot_pragma_elementwise);
+  Toks[0].setLocation(PackLoc);
+  PP.EnterTokenStream(Toks, 1, /*DisableMacroExpansion=*/true,
+                      /*OwnsTokens=*/false);
+}
+
 // #pragma ms_struct on
 // #pragma ms_struct off
 void PragmaMSStructHandler::HandlePragma(Preprocessor &PP, 

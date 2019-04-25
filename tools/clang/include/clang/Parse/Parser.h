@@ -141,6 +141,7 @@ class Parser : public CodeCompletionHandler {
   OwningPtr<PragmaHandler> GCCVisibilityHandler;
   OwningPtr<PragmaHandler> OptionsHandler;
   OwningPtr<PragmaHandler> PackHandler;
+  OwningPtr<PragmaHandler> ElementWiseHandler;
   OwningPtr<PragmaHandler> MSStructHandler;
   OwningPtr<PragmaHandler> UnusedHandler;
   OwningPtr<PragmaHandler> WeakHandler;
