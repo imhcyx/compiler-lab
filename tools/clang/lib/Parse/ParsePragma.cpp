@@ -62,6 +62,12 @@ void Parser::HandlePragmaPack() {
                           Info->LParenLoc, Info->RParenLoc);
 }
 
+void Parser::HandlePragmaElementWise() {
+  assert(Tok.is(tok::annot_pragma_element_wise));
+  SourceLocation PragmaLoc = ConsumeToken();
+  Actions.ActOnPragmaElementWise();
+}
+
 void Parser::HandlePragmaMSStruct() {
   assert(Tok.is(tok::annot_pragma_msstruct));
   Sema::PragmaMSStructKind Kind =

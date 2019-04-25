@@ -625,6 +625,9 @@ Parser::ParseExternalDeclaration(ParsedAttributesWithRange &attrs,
   case tok::annot_pragma_pack:
     HandlePragmaPack();
     return DeclGroupPtrTy();
+  case tok::annot_pragma_elementwise:
+    HandlePragmaElementWise();
+    return DeclGroupPtrTy();
   case tok::annot_pragma_msstruct:
     HandlePragmaMSStruct();
     return DeclGroupPtrTy();

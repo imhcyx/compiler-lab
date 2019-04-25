@@ -259,6 +259,10 @@ void Sema::ActOnPragmaPack(PragmaPackKind Kind, IdentifierInfo *Name,
   }
 }
 
+void Sema::ActOnPragmaElementWise() {
+  ElementWise = true;
+}
+
 void Sema::ActOnPragmaMSStruct(PragmaMSStructKind Kind) { 
   MSStructPragmaOn = (Kind == PMSST_ON);
 }
