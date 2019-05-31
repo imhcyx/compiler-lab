@@ -49,3 +49,4 @@ docs/_build
 
 # extra files
 .nosyntax
+.vscode
