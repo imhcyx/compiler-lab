@@ -6299,6 +6299,18 @@ Sema::CheckSingleAssignmentConstraints(QualType LHSType, ExprResult &RHS,
     return Compatible;
   }
 
+  // PR002 case
+  if (this->ElementWise &&
+      ConstantArrayType::classof(LHSType.getTypePtr()) &&
+      ConstantArrayType::classof(RHS.get()->getType().getTypePtr())) {
+    if (LHSType.getTypePtr() == RHS.get()->getType().getTypePtr()) {
+      return Compatible;
+    }
+    else {
+      return Incompatible;
+    }
+  }
+
   // This check seems unnatural, however it is necessary to ensure the proper
   // conversion of functions/arrays. If the conversion were done for all
   // DeclExpr's (created by ActOnIdExpression), it would mess up the unary
