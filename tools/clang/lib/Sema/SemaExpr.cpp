@@ -6483,6 +6483,32 @@ QualType Sema::CheckMultiplyDivideOperands(ExprResult &LHS, ExprResult &RHS,
       RHS.get()->getType()->isVectorType())
     return CheckVectorOperands(LHS, RHS, Loc, IsCompAssign);
 
+  Expr *l = LHS.get(), *r = RHS.get();
+  const Type *ltype = l->getType().getTypePtr(),
+             *rtype = r->getType().getTypePtr();
+  if (this->ElementWise &&
+      ConstantArrayType::classof(ltype) &&
+      ConstantArrayType::classof(rtype)) {
+    const ConstantArrayType *latype = dyn_cast<ConstantArrayType>(ltype),
+                            *ratype = dyn_cast<ConstantArrayType>(rtype);
+    llvm::APInt lalen = latype->getSize(),
+                ralen = ratype->getSize();
+    QualType ldtype = latype->getElementType().getUnqualifiedType(),
+             rdtype = ratype->getElementType().getUnqualifiedType();
+    if (lalen == ralen && ldtype == rdtype) {
+      Qualifiers t;
+      if (!l->isRValue()) {
+        ImplicitCastExpr *lr2l = ImplicitCastExpr::Create(Context, Context.getUnqualifiedArrayType(l->getType().getUnqualifiedType(), t), CK_LValueToRValue, const_cast<Expr *>(l), 0, VK_RValue);
+        LHS = lr2l;
+      }
+      if (!r->isRValue()) {
+        ImplicitCastExpr *rr2l = ImplicitCastExpr::Create(Context, Context.getUnqualifiedArrayType(r->getType().getUnqualifiedType(), t), CK_LValueToRValue, const_cast<Expr *>(r), 0, VK_RValue);
+        RHS = rr2l;
+      }
+      return LHS.get()->getType();
+    }
+  }
+
   QualType compType = UsualArithmeticConversions(LHS, RHS, IsCompAssign);
   if (LHS.isInvalid() || RHS.isInvalid())
     return QualType();
