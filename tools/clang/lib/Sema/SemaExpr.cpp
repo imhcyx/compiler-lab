@@ -6300,14 +6300,15 @@ Sema::CheckSingleAssignmentConstraints(QualType LHSType, ExprResult &RHS,
   }
 
   // PR002 case
+  QualType RHSType = RHS.get()->getType();
   if (this->ElementWise &&
       ConstantArrayType::classof(LHSType.getTypePtr()) &&
-      ConstantArrayType::classof(RHS.get()->getType().getTypePtr())) {
-    QualType RHSType = RHS.get()->getType();
-
+      ConstantArrayType::classof(RHSType.getTypePtr())) {
+    const ConstantArrayType *ratype = dyn_cast<ConstantArrayType>(RHSType);
+    QualType rdtype = ratype->getElementType().getUnqualifiedType();
     LHSType = Context.getCanonicalType(LHSType).getUnqualifiedType();
     RHSType = Context.getCanonicalType(RHSType).getUnqualifiedType();
-    if (LHSType == RHSType) {
+    if (LHSType == RHSType && rdtype->isIntType()) {
       return Compatible;
     }
     else {
@@ -6499,7 +6500,7 @@ QualType Sema::CheckMultiplyDivideOperands(ExprResult &LHS, ExprResult &RHS,
                 ralen = ratype->getSize();
     QualType ldtype = latype->getElementType().getUnqualifiedType(),
              rdtype = ratype->getElementType().getUnqualifiedType();
-    if (lalen == ralen && ldtype == rdtype) {
+    if (lalen == ralen && ldtype == rdtype && ldtype->isIntType()) {
       Qualifiers t;
       if (!l->isRValue()) {
         ImplicitCastExpr *lr2l = ImplicitCastExpr::Create(Context, Context.getUnqualifiedArrayType(l->getType().getUnqualifiedType(), t), CK_LValueToRValue, const_cast<Expr *>(l), 0, VK_RValue);
@@ -6769,7 +6770,7 @@ QualType Sema::CheckAdditionOperands( // C99 6.5.6
                 ralen = ratype->getSize();
     QualType ldtype = latype->getElementType().getUnqualifiedType(),
              rdtype = ratype->getElementType().getUnqualifiedType();
-    if (lalen == ralen && ldtype == rdtype) {
+    if (lalen == ralen && ldtype == rdtype && ldtype->isIntType()) {
       Qualifiers t;
       if (!l->isRValue()) {
         ImplicitCastExpr *lr2l = ImplicitCastExpr::Create(Context, Context.getUnqualifiedArrayType(l->getType().getUnqualifiedType(), t), CK_LValueToRValue, const_cast<Expr *>(l), 0, VK_RValue);
