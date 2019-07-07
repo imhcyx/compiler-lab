@@ -183,8 +183,21 @@ llvm::Value *CodeGenFunction::EmitVectorExpr(const Expr *E) {
       store->setAlignment(4);
     }
     else {
-      // TODO: add & mul
       // The result is stored in AllocR
+      llvm::LoadInst *valueL = Builder.CreateLoad(LHSAddr, "");
+      valueL->setAlignment(4);
+      llvm::LoadInst *valueR = Builder.CreateLoad(RHSAddr, "");
+      valueR->setAlignment(4);
+      llvm::Value *AllocRBase = (llvm::Value *)AllocR;
+      llvm::Value *AllocRArrayPtr = MakeAddrLValue(AllocRBase, TyR).getAddress();
+      llvm::Value *AllocRAddr = Builder.CreateInBoundsGEP(AllocRArrayPtr, Args, "arrayidx");
+      llvm::Value *res;
+      if(bo->getOpcode() == BO_Add)
+        res = Builder.CreateAdd((llvm::Value *)valueL, (llvm::Value *)valueR, "add");
+      if(bo->getOpcode() == BO_Mul)
+        res = Builder.CreateMul((llvm::Value *)valueL, (llvm::Value *)valueR, "mul");
+      llvm::StoreInst *storeAllocR = Builder.CreateStore(res, (llvm::Value *)AllocRAddr, false);
+      storeAllocR->setAlignment(4);
     }
 
     // Increment & BR
